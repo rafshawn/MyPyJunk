@@ -2,6 +2,7 @@ import os
 import requests
 from bs4 import BeautifulSoup
 import wget
+from urllib.parse import urljoin
 
 url = 'https://www.cs.mun.ca/~harold/'
 download_folder = 'downloads'
@@ -19,6 +20,9 @@ for img in imgs:
     print(img, end=',\n')
 
 for img in imgs:
-    img_url = os.path.join(url, img['src'])
+    img_url = urljoin(url, img['src'])
     file_name = img['src'].split('/')[-1]
-    wget.download(img_url, out=os.path.join(download_folder, file_name))
+    try:
+        wget.download(img_url, out=os.path.join(download_folder, file_name))
+    except Exception as e:      # Ignores exceptions (HTTPSerrors, etc.) and moves on to next download
+        print(f"Error downloading {img_url}: {e}")
